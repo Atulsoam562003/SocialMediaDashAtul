@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <title>Frontend Mentor | Social Media Dashboard</title>
+  <style>
+    .attribution {
+      font-size: 11px;
+      text-align: center;
+      margin: 1.7rem;
+    }
+
+    .attribution a {
+      color: hsl(228, 34%, 66%);
+    }
+
+    .attribution a:hover {
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <h1>Social Media Dashboard</h1>
+      <p id="total-followers">Total Followers: <%= totalFollowers %>
+      </p>
+    </div>
+    <hr>
+    <div class="toggle-button">
+      <span id="mode-text">Dark Mode</span>
+      <label for="switch" class="switch">
+        <input type="checkbox" id="switch">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </header>
+  <main>
+    <div class="dashboard">
+      <a href="#" class="square-card facebook" aria-label="card">
+        <div class="name">
+          <img src="/images/icon-facebook.svg" alt="media-icon">
+          <span>Atul soam</span>
+        </div>
+        <h2>1987</h2>
+        <p>Followers</p>
+        <div class="change increase">
+          <img src="/images/icon-up.svg" alt="up-arrow">
+          <span>12 Today</span>
+        </div>
+      </a>
+      <!-- Add other cards here -->
+    </div>
+    <h2 id="overview-heading">Overview - Today</h2>
+    <section class="overview">
+      <!-- Add overview cards here -->
+    </section>
+  </main>
+  <footer class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>.
+    Coded by <a href="https://www.facebook.com/drougnov.bd.9">Biplob Barua Rocky</a>.
+  </footer>
+  <script>
+    // JavaScript code here
+
+    const slider = document.querySelector(".slider");
+    const modeText = document.getElementById("mode-text");
+
+    slider.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      if (document.body.classList.contains("light-mode")) {
+        slider.parentElement.classList.add("active");
+        modeText.innerText = "Light Mode";
+      } else {
+        slider.parentElement.classList.remove("active");
+        modeText.innerText = "Dark Mode";
+      }
+    });
+
+    const subscriber = document.getElementById("subscribers");
+    const like = document.getElementById("likes");
+    const view = document.getElementById("views");
+    const videoCount = document.getElementById("videoCounts");
+    const loader = document.querySelector(".loader-box");
+    // const loader = document.querySelector(".loader-box");
+
+    setTimeout(getVideos, 3000);
+    function getVideos() {
+      fetch(
+        "https://youtube.googleapis.com/youtube/v3/channels?part=statistics&id=UCsvqVGtbbyHaMoevxPAq9Fg&key=AIzaSyAff7EuMQIfy_Hutm6RAO4HGER4z-liR2U"
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          loader.style.display = "none";
+          if (data.items.length > 0) {
+            const subscribers = data.items[0].statistics.subscriberCount;
+            const views = data.items[0].statistics.viewCount;
+            const videoCounts = data.items[0].statistics.videoCount;
+            videoCount.innerHTML = `${videoCounts}`;
+            view.innerHTML = `${views}`;
+            subscriber.innerHTML = `${subscribers}`;
+          } else {
+            throw new Error("Channel not found or statistics unavailable");
+          }
+        })
+        .catch((err) => {
+          loader.style.display = "none";
+          console.log(err);
+          subscriber.innerHTML = `<h3>Sorry something went wrong , try again later</h3>`;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Generate random follower counts
+      var facebookFollowers = Math.floor(Math.random() * 100000);
+      var twitterFollowers = Math.floor(Math.random() * 100000);
+      var instagramFollowers = Math.floor(Math.random() * 100000);
+      var youtubeSubscribers = Math.floor(Math.random() * 100000);
+
+      // console.log(
+      //   facebookFollowers,
+      //   twitterFollowers,
+      //   instagramFollowers,
+      //   youtubeSubscribers
+      // );
+
+      // Calculate the total follower count
+      var totalFollowers =
+        facebookFollowers +
+        twitterFollowers +
+        instagramFollowers +
+        youtubeSubscribers;
+
+      // Update the content of the <p> element with the total follower count
+      document.getElementById("total-followers").textContent =
+        "Total Followers: " + totalFollowers.toLocaleString();
+    });
+
+    // Replace these values with your actual credentials
+    const username = "Chiranton_Baruah";
+    const password = "t9ra_RNGikrQ-.v";
+    const clientId = "lLfvwo00g9XNpLrIK0DQIQ";
+    const clientSecret = "y4IH1Vgc6-_h5L94o_Xjg4MMvX_eyA";
+
+    // Function to get the access token
+    function getAccessToken() {
+      const tokenUrl = "https://www.reddit.com/api/v1/access_token";
+      const credentials = btoa(`${clientId}:${clientSecret}`);
+      const headers = new Headers({
+        Authorization: `Basic ${credentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      });
+
+      const body = `grant_type=password&username=${encodeURIComponent(
+        username
+      )}&password=${encodeURIComponent(password)}`;
+
+      return fetch(tokenUrl, {
+        method: "POST",
+        headers: headers,
+        body: body,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.access_token) {
+            return data.access_token;
+          } else {
+            throw new Error("Failed to retrieve access token");
+          }
+        });
+    }
+
+    // Function to make an authorized request to the Reddit API
+    function makeAuthorizedRequest(accessToken) {
+      const apiUrl = "https://oauth.reddit.com/api/v1/me";
+      const headers = new Headers({
+        Authorization: `bearer ${accessToken}`,
+        "User-Agent": "ChangeMeClient/0.1 by YourUsername",
+      });
+
+      return fetch(apiUrl, {
+        method: "GET",
+        headers: headers,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          const likes = data.subreddit.subscribers;
+          like.innerHTML = `${likes}`;
+        });
+    }
+
+    // Example usage
+    getAccessToken().then((accessToken) => {
+      makeAuthorizedRequest(accessToken);
+    });
+
+  </script>
+</body>
+
+</html>

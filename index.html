@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <link rel="stylesheet" href="./style.css"> -->
+  <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:3000/images/favicon-32x32.png">
+  <title>Frontend Mentor | Social Media Dashboard</title>
+  <style>
+    /* Reset styles */
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+    }
+
+    /* Animations */
+    @keyframes slideInFromLeft {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* Color Variables */
+    :root {
+      --main-bg: hsl(230, 17%, 14%);
+      --pattern-bg: hsl(232, 19%, 15%);
+      --toggle-button: linear-gradient(to right,
+          hsl(210, 78%, 56%),
+          hsl(146, 68%, 55%));
+      --card-bg: hsl(228, 28%, 20%);
+      --card-hover: hsl(228, 20%, 35%);
+      --primary-text: hsl(228, 34%, 66%);
+      --primary-heading: hsl(0, 0%, 100%);
+      --secondary-heading: hsl(0, 0%, 100%);
+    }
+
+    /* Light Mode */
+    :root .light-mode {
+      --main-bg: hsl(0, 0%, 100%);
+      --pattern-bg: hsl(225, 100%, 98%);
+      --toggle-button: hsl(230, 22%, 74%);
+      --card-bg: hsl(227, 47%, 96%);
+      --card-hover: hsl(227, 50%, 92%);
+      --primary-text: hsl(228, 12%, 44%);
+      --primary-heading: hsl(230, 17%, 14%);
+      --secondary-heading: hsl(228, 12%, 44%);
+    }
+
+    /* Body */
+    body {
+      min-height: 100vh;
+      color: var(--primary-text);
+      background: var(--main-bg);
+      font-size: 1rem;
+      font-weight: 700;
+      position: relative;
+      transition: all 0.5s ease-in-out;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: -1.7rem;
+      left: 0;
+      width: 100%;
+      height: 35vh;
+      background: var(--pattern-bg);
+      border-bottom-left-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+      z-index: -1;
+    }
+
+    /* Headings */
+    h1,
+    h2 {
+      color: var(--primary-heading);
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.7rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+    }
+
+    header hr {
+      height: 1px;
+      background-color: var(--primary-text);
+      border: 0;
+      margin-top: 0.5rem;
+    }
+
+    header .toggle-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toggle-button .switch {
+      width: 3rem;
+      height: 1.5rem;
+      display: inline-block;
+      position: relative;
+    }
+
+    /* Toggle Button */
+    .switch #switch {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background: var(--toggle-button);
+      border-radius: 1rem;
+      cursor: pointer;
+    }
+
+    .slider:active,
+    .slider:hover {
+      background: var(--toggle-button);
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      height: 1.2rem;
+      width: 1.2rem;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background-color: var(--pattern-bg);
+      margin: 0.15rem;
+      border-radius: 50%;
+    }
+
+    .switch.active .slider::before {
+      position: absolute;
+      content: "";
+      height: 1.2rem;
+      width: 1.2rem;
+      right: 0;
+      left: auto;
+      top: 0;
+      bottom: 0;
+      background-color: var(--pattern-bg);
+      margin: 0.15rem;
+      border-radius: 50%;
+    }
+
+    /* Main Content */
+    .overview,
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin: 0 1.7rem 3rem 1.7rem;
+      animation: 0.6s ease-out 0s 1 slideInFromLeft;
+    }
+
+    .dashboard .square-card {
+      height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--primary-text);
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 0.3rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .dashboard .square-card:hover {
+      background: var(--card-hover);
+      transform: scale(1.02);
+    }
+
+    /* Social Media Colors */
+    .facebook {
+      border-top: 4px solid hsl(208, 92%, 53%);
+    }
+
+    .twitter {
+      border-top: 4px solid hsl(203, 89%, 53%);
+    }
+
+    .instagram {
+      position: relative;
+    }
+
+    .instagram:before {
+      content: "";
+      position: absolute;
+      height: 4px;
+      top: 4px;
+      right: 0;
+      left: 0;
+      z-index: 1;
+      background: linear-gradient(45deg, #fdc468, #df4996);
+      margin: -4px 0 0 0;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .youtube {
+      border-top: 4px solid hsl(348, 97%, 39%);
+    }
+
+    /* Card Styles */
+    .square-card .name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .square-card h2 {
+      font-size: 3.5rem;
+    }
+
+    .square-card p {
+      font-size: 14px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .change {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .increase {
+      color: hsl(163, 72%, 41%);
+    }
+
+    .decrease {
+      color: hsl(356, 69%, 56%);
+    }
+
+    .dashboard span,
+    .overview span {
+      font-size: 13px;
+    }
+
+    #overview-heading {
+      margin: 1.7rem;
+      color: var(--secondary-heading);
+    }
+
+    /* Overview Cards */
+    .overview .rectan-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      color: var(--primary-text);
+      background: var(--card-bg);
+      border-radius: 0.3rem;
+      padding: 1.5rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .overview .rectan-card:hover {
+      background: var(--card-hover);
+      transform: scale(1.02);
+    }
+
+    .rectan-card .up {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rectan-card .down {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .down h2 {
+      font-size: 2rem;
+    }
+
+    /* Media Queries */
+    @media (min-width: 820px) {
+      header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin: 3rem 8rem;
+      }
+
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      header hr {
+        display: none;
+      }
+
+      header .toggle-button {
+        gap: 1rem;
+      }
+
+      #overview-heading {
+        margin: 1.7rem 8rem;
+      }
+
+      .dashboard,
+      .overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        margin: 0 8rem 3rem 8rem;
+      }
+    }
+
+    /* Footer/Attribution */
+    .attribution {
+      font-size: 11px;
+      text-align: center;
+      margin: 1.7rem;
+    }
+
+    .attribution a {
+      color: hsl(228, 34%, 66%);
+      text-decoration: none;
+    }
+
+    .attribution a:hover {
+      text-decoration: none;
+    }
+
+    .attribution {
+      font-size: 11px;
+      text-align: center;
+      margin: 1.7rem;
+    }
+
+    .attribution a {
+      color: hsl(228, 34%, 66%)
+    }
+
+    .attribution a:hover {
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <h1>Social Media Dashboard</h1>
+      <p id="total-followers">Total Followers:
+        3467263 </p>
+    </div>
+    <hr>
+    <div class="toggle-button">
+      <span id="mode-text">Dark Mode</span>
+      <label for="switch" class="switch">
+        <input type="checkbox" id="switch">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </header>
+  <main>
+    <div class="dashboard">
+      <a href="#" class="square-card facebook" aria-label="card">
+        <div class="name">
+          <img src="http://localhost:3000/images/icon-facebook.svg" alt="media-icon">
+          <span>Atul soam</span>
+        </div>
+        <h2>1987</h2>
+        <p>Followers</p>
+        <div class="change increase">
+          <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+          <span>12 Today</span>
+        </div>
+      </a>
+      <a href="#" class="square-card twitter" aria-label="card">
+        <div class="name">
+          <img src="http://localhost:3000/images/icon-twitter.svg" alt="media-icon">
+          <span>Atul soam</span>
+        </div>
+        <h2>1044</h2>
+        <p>Followers</p>
+        <div class="change increase">
+          <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+          <span>99 Today</span>
+        </div>
+      </a>
+      <a href="#" class="square-card instagram" aria-label="card">
+        <div class="name">
+          <img src="http://localhost:3000/images/icon-instagram.svg" alt="media-icon">
+          <span>@Atulsoam</span>
+        </div>
+        <h2>11k</h2>
+        <p>Followers</p>
+        <div class="change increase">
+          <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+          <span>1099 Today</span>
+        </div>
+      </a>
+      <a class="square-card youtube" aria-label="card">
+        <div class="name">
+          <img src="http://localhost:3000/images/icon-youtube.svg" alt="media-icon">
+          <span>Atulsoam</span>
+        </div>
+        <section>
+          <h2 class="loader-box"></h2>
+        </section>
+        <!-- <h2>11k</h2> -->
+        <h2 id="subscribers">
+        </h2>
+        <p>Subscribers</p>
+        <div class="change decrease">
+          <img src="http://localhost:3000/images/icon-down.svg" alt="down-arrow">
+          <span>17 Today</span>
+        </div>
+      </a>
+    </div>
+    <h2 id="overview-heading">Overview - Today</h2>
+    <section class="overview">
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Page Views</p>
+          <img src="http://localhost:3000/images/icon-facebook.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2>87</h2>
+          <div class="change increase">
+            <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+            <span>3%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Likes</p>
+          <img src="http://localhost:3000/images/icon-facebook.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2 id="likes">52</h2>
+          <div class="change decrease">
+            <img src="http://localhost:3000/images/icon-down.svg" alt="down-arrow">
+            <span>2%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Likes</p>
+          <img src="http://localhost:3000/images/icon-instagram.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2>5462</h2>
+          <div class="change increase">
+            <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+            <span>2257%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Profile Views</p>
+          <img src="http://localhost:3000/images/icon-instagram.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2>52K</h2>
+          <div class="change increase">
+            <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+            <span>1375%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Retweets</p>
+          <img src="http://localhost:3000/images/icon-twitter.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2>117</h2>
+          <div class="change increase">
+            <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+            <span>303%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Likes</p>
+          <img src="http://localhost:3000/images/icon-twitter.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2>507</h2>
+          <div class="change increase">
+            <img src="http://localhost:3000/images/icon-up.svg" alt="up-arrow">
+            <span>553%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Total Videos</p>
+          <img src="http://localhost:3000/images/icon-youtube.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2 id="videoCounts"></h2>
+          <div class="change decrease">
+            <img src="http://localhost:3000/images/icon-down.svg" alt="down-arrow">
+            <span>19%</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="rectan-card" aria-label="card">
+        <div class="up">
+          <p>Total Views</p>
+          <img src="http://localhost:3000/images/icon-youtube.svg" alt="media-icon">
+        </div>
+        <div class="down">
+          <h2 id="views"></h2>
+          <div class="change decrease">
+            <img src="http://localhost:3000/images/icon-down.svg" alt="down-arrow">
+            <span>12%</span>
+          </div>
+        </div>
+      </a>
+    </section>
+  </main>
+  <footer class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>.
+    Coded by <a href="https://www.facebook.com/drougnov.bd.9">Atul soam</a>.
+  </footer>
+  <script>
+    const slider = document.querySelector(".slider");
+    const modeText = document.getElementById("mode-text");
+
+    slider.addEventListener("click", () => {
+      document.body.classList.toggle("light-mode");
+      if (document.body.classList.contains("light-mode")) {
+        slider.parentElement.classList.add("active");
+        modeText.innerText = "Light Mode";
+      } else {
+        slider.parentElement.classList.remove("active");
+        modeText.innerText = "Dark Mode";
+      }
+    });
+
+    const subscriber = document.getElementById("subscribers");
+    const like = document.getElementById("likes");
+    const view = document.getElementById("views");
+    const videoCount = document.getElementById("videoCounts");
+    const loader = document.querySelector(".loader-box");
+    // const loader = document.querySelector(".loader-box");
+
+    // setTimeout(getVideos, 3000);
+    getVideos();
+    function getVideos() {
+      fetch(
+        "https://youtube.googleapis.com/youtube/v3/channels?part=statistics&id=UCsvqVGtbbyHaMoevxPAq9Fg&key=AIzaSyAff7EuMQIfy_Hutm6RAO4HGER4z-liR2U"
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          loader.style.display = "none";
+          if (data.items.length > 0) {
+            const subscribers = data.items[0].statistics.subscriberCount;
+            const views = data.items[0].statistics.viewCount;
+            const videoCounts = data.items[0].statistics.videoCount;
+            videoCount.innerHTML = `${videoCounts}`;
+            view.innerHTML = `${views}`;
+            subscriber.innerHTML = `${subscribers}`;
+          } else {
+            throw new Error("Channel not found or statistics unavailable");
+          }
+        })
+        .catch((err) => {
+          loader.style.display = "none";
+          console.log(err);
+          subscriber.innerHTML = `<h3>Sorry something went wrong , try again later</h3>`;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Generate random follower counts
+      var facebookFollowers = Math.floor(Math.random() * 100000);
+      var twitterFollowers = Math.floor(Math.random() * 100000);
+      var instagramFollowers = Math.floor(Math.random() * 100000);
+      var youtubeSubscribers = Math.floor(Math.random() * 100000);
+
+      // console.log(
+      //   facebookFollowers,
+      //   twitterFollowers,
+      //   instagramFollowers,
+      //   youtubeSubscribers
+      // );
+
+      // Calculate the total follower count
+      var totalFollowers =
+        facebookFollowers +
+        twitterFollowers +
+        instagramFollowers +
+        youtubeSubscribers;
+
+      // Update the content of the <p> element with the total follower count
+      document.getElementById("total-followers").textContent =
+        "Total Followers: " + totalFollowers.toLocaleString();
+    });
+
+    // Replace these values with your actual credentials
+    const username = "Chiranton_Baruah";
+    const password = "t9ra_RNGikrQ-.v";
+    const clientId = "lLfvwo00g9XNpLrIK0DQIQ";
+    const clientSecret = "y4IH1Vgc6-_h5L94o_Xjg4MMvX_eyA";
+
+    // Function to get the access token
+    function getAccessToken() {
+      const tokenUrl = "https://www.reddit.com/api/v1/access_token";
+      const credentials = btoa(`${clientId}:${clientSecret}`);
+      const headers = new Headers({
+        Authorization: `Basic ${credentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      });
+
+      const body = `grant_type=password&username=${encodeURIComponent(
+        username
+      )}&password=${encodeURIComponent(password)}`;
+
+      return fetch(tokenUrl, {
+        method: "POST",
+        headers: headers,
+        body: body,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.access_token) {
+            return data.access_token;
+          } else {
+            throw new Error("Failed to retrieve access token");
+          }
+        });
+    }
+
+    // Function to make an authorized request to the Reddit API
+    function makeAuthorizedRequest(accessToken) {
+      const apiUrl = "https://oauth.reddit.com/api/v1/me";
+      const headers = new Headers({
+        Authorization: `bearer ${accessToken}`,
+        "User-Agent": "ChangeMeClient/0.1 by YourUsername",
+      });
+
+      return fetch(apiUrl, {
+        method: "GET",
+        headers: headers,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          const likes = data.subreddit.subscribers;
+          like.innerHTML = `${likes}`;
+        });
+    }
+
+    // Example usage
+    getAccessToken().then((accessToken) => {
+      makeAuthorizedRequest(accessToken);
+    });
+
+  </script>
+</body>
+
+</html>
